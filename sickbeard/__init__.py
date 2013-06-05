@@ -30,7 +30,7 @@ from threading import Lock
 
 # apparently py2exe won't build these unless they're imported somewhere
 from sickbeard import providers, metadata
-from providers import ezrss, tvtorrents, btn, nzbsrus, newznab, womble, thepiratebay, dtt, torrentleech, kat, nzbx, iptorrents, omgwtfnzbs
+from providers import ezrss, tvtorrents, btn, nzbsrus, newznab, womble, thepiratebay, dtt, torrentleech, kat, nzbx, iptorrents, omgwtfnzbs, torrentday
 from sickbeard.config import CheckSection, check_setting_int, check_setting_str, ConfigMigrator
 
 
@@ -257,6 +257,12 @@ TORRENT_PAUSED = False
 TORRENT_HIGH_BANDWIDTH = False
 TORRENT_LABEL = ''
 
+TORRENTDAY = False
+TORRENTDAY_USERNAME = None
+TORRENTDAY_PASSWORD = None
+TORRENTDAY_UID =None
+TORRENTDAY_RSSHASH = None
+
 USE_XBMC = False
 XBMC_NOTIFY_ONSNATCH = False
 XBMC_NOTIFY_ONDOWNLOAD = False
@@ -433,7 +439,8 @@ def initialize(consoleLogging=True):
                 DTT, DTT_NORAR, DTT_SINGLE, THEPIRATEBAY, THEPIRATEBAY_TRUSTED, THEPIRATEBAY_PROXY, THEPIRATEBAY_PROXY_URL, THEPIRATEBAY_BLACKLIST, TORRENTLEECH, TORRENTLEECH_USERNAME, TORRENTLEECH_PASSWORD, \
                 IPTORRENTS, IPTORRENTS_USERNAME, IPTORRENTS_PASSWORD, IPTORRENTS_FREELEECH, KAT, KAT_VERIFIED, \
                 TORRENT_DIR, USENET_RETENTION, SOCKET_TIMEOUT, SEARCH_FREQUENCY, DEFAULT_SEARCH_FREQUENCY, BACKLOG_SEARCH_FREQUENCY, \
-                QUALITY_DEFAULT, FLATTEN_FOLDERS_DEFAULT, SUBTITLES_DEFAULT, STATUS_DEFAULT, \
+                TORRENTDAY, TORRENTDAY_USERNAME, TORRENTDAY_PASSWORD, TORRENTDAY_RSSHASH,TORRENTDAY_UID,\
+    			QUALITY_DEFAULT, FLATTEN_FOLDERS_DEFAULT, SUBTITLES_DEFAULT, STATUS_DEFAULT, \
                 GROWL_NOTIFY_ONSNATCH, GROWL_NOTIFY_ONDOWNLOAD, GROWL_NOTIFY_ONSUBTITLEDOWNLOAD, TWITTER_NOTIFY_ONSNATCH, TWITTER_NOTIFY_ONDOWNLOAD, TWITTER_NOTIFY_ONSUBTITLEDOWNLOAD, \
                 USE_GROWL, GROWL_HOST, GROWL_PASSWORD, USE_PROWL, PROWL_NOTIFY_ONSNATCH, PROWL_NOTIFY_ONDOWNLOAD, PROWL_NOTIFY_ONSUBTITLEDOWNLOAD, PROWL_API, PROWL_PRIORITY, PROG_DIR, NZBMATRIX, NZBMATRIX_USERNAME, \
                 USE_PYTIVO, PYTIVO_NOTIFY_ONSNATCH, PYTIVO_NOTIFY_ONDOWNLOAD, PYTIVO_NOTIFY_ONSUBTITLEDOWNLOAD, PYTIVO_UPDATE_LIBRARY, PYTIVO_HOST, PYTIVO_SHARE_NAME, PYTIVO_TIVO_NAME, \
@@ -619,6 +626,12 @@ def initialize(consoleLogging=True):
         TORRENTLEECH_USERNAME = check_setting_str(CFG, 'TORRENTLEECH', 'torrentleech_username', '')
         TORRENTLEECH_PASSWORD = check_setting_str(CFG, 'TORRENTLEECH', 'torrentleech_password', '')
 
+		TORRENTDAY = bool(check_setting_int(CFG, 'TORRENTDAY', 'torrentday', 0))    
+        TORRENTDAY_USERNAME = check_setting_str(CFG, 'TORRENTDAY', 'torrentday_username', '')   
+        TORRENTDAY_PASSWORD = check_setting_str(CFG, 'TORRENTDAY', 'torrentday_password', '')
+        TORRENTDAY_UID = check_setting_str(CFG, 'TORRENTDAY', 'torrentday_uid', '') 
+        TORRENTDAY_RSSHASH = check_setting_str(CFG, 'TORRENTDAY', 'torrentday_rsshash', '') 
+		
         IPTORRENTS = bool(check_setting_int(CFG, 'IPTORRENTS', 'iptorrents', 0))
         IPTORRENTS_USERNAME = check_setting_str(CFG, 'IPTORRENTS', 'iptorrents_username', '')
         IPTORRENTS_PASSWORD = check_setting_str(CFG, 'IPTORRENTS', 'iptorrents_password', '')
@@ -1287,6 +1300,13 @@ def save_config():
     new_config['TORRENTLEECH']['torrentleech_username'] = TORRENTLEECH_USERNAME
     new_config['TORRENTLEECH']['torrentleech_password'] = TORRENTLEECH_PASSWORD
 
+	new_config['TORRENTDAY'] = {}
+    new_config['TORRENTDAY']['torrentday'] = int(TORRENTDAY)
+    new_config['TORRENTDAY']['torrentday_username'] = TORRENTDAY_USERNAME
+    new_config['TORRENTDAY']['torrentday_password'] = TORRENTDAY_PASSWORD
+    new_config['TORRENTDAY']['torrentday_rsshash'] = TORRENTDAY_RSSHASH
+    new_config['TORRENTDAY']['torrentday_uid'] = TORRENTDAY_UID
+	
     new_config['IPTORRENTS'] = {}
     new_config['IPTORRENTS']['iptorrents'] = int(IPTORRENTS)
     new_config['IPTORRENTS']['iptorrents_username'] = IPTORRENTS_USERNAME
